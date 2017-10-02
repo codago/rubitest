@@ -16,4 +16,28 @@ router.get('/', function(req, res, next) {
   })
 });
 
+router.get('/:id', function(req, res, next) {
+  Phonebook.findById(req.params.id, function(err, phonebook){
+    if(err){
+      res.json({'ERROR': err})
+    }else{
+      res.json(phonebook);
+    }
+  })
+});
+
+router.post('/', function(req, res, next){
+  let phonebook = new Phonebook({
+    name: req.body.name,
+    phone: req.body.phone
+  });
+  phonebook.save(function(err, data){
+    if(err){
+      res.json({'ERROR': err})
+    }else{
+      res.json({'SUCCESS': data})
+    }
+  })
+})
+
 module.exports = router;
