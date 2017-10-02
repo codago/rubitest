@@ -40,4 +40,38 @@ router.post('/', function(req, res, next){
   })
 })
 
+router.put('/:id', function(req, res, next){
+  Phonebook.findById(req.params.id, function(err, phonebook){
+    if(err){
+      res.json({'ERROR': err})
+    }else{
+      phonebook.name = req.body.name;
+      phonebook.phone = req.body.phone;
+      phonebook.save(function(err){
+        if(err){
+          res.json({'ERROR': err});
+        }else{
+          res.json({'UPDATED': phonebook});
+        }
+      })
+    }
+  })
+})
+
+router.delete('/:id', function(req, res, next){
+  Phonebook.findById(req.params.id, function(err, phonebook){
+    if(err){
+      res.json({'ERROR': err});
+    }else{
+      phonebook.remove(function(err){
+        if(err){
+          res.json({'ERROR': err});
+        }else{
+          res.json({'REMOVED': phonebook})
+        }
+      })
+    }
+  })
+})
+
 module.exports = router;
