@@ -1,11 +1,98 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+<head>
+  <title>PHONEBOOKS APP</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="panel panel-primary">
+      <!-- Default panel contents -->
+      <div class="panel-heading">
+        <div class="text-center">
+          <h1>PHONEBOOKS APP</h1>
+        </div>
+      </div>
+      <div class="panel-body">
+        <form id="phonebook-form" class="form-horizontal" method="POST">
+          <div class="form-group">
+            <label for="name" class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="name" name="name" placeholder="input the name" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="phone" class="col-sm-2 control-label">Phone</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="phone" name="phone" placeholder="input the phone number" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-success">Save</button>
+              <button type="reset" class="btn btn-warning">Reset</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Table -->
+      <table id="phonebook-table" class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  <script type="text/javascript">
+  $(document).ready(function(){
+    drawTable();
+    add();
+  })
+
+  function drawTable(){
+    $.get( "http://localhost:3001/phonebooks", function(data) {
+      let html = "";
+      for(let i = 0; i < data.length; i++){
+        html += "<tr>"
+        html += "<td>" + data[i]._id + "</td>"
+        html += "<td>" + data[i].name + "</td>"
+        html += "<td>" + data[i].phone + "</td>"
+        html += "<td>&nbsp;</td>"
+        html += "</tr>"
+      }
+      $("#phonebook-table tbody").html(html);
+    });
+  }
+
+  function add(){
+    $('#phonebook-form').submit(function(e){
+      e.preventDefault();
+      $.ajax({
+        method: "POST",
+        url: "http://localhost:3001/phonebooks",
+        data: $(this).serialize()
+      })
+      .done(function(data) {
+        drawTable();
+      });
+      return false;
+    });
+  }
+  </script>
+</body>
 </html>
