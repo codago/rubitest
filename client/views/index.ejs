@@ -73,11 +73,12 @@
     </div><!-- /.modal -->
   </div>
   <script type="text/javascript">
+  var idedit = "";
   $(document).ready(function(){
     drawTable();
-    add();
+    save();
     remove();
-    confirmDelete();
+    edit();
   })
 
   function drawTable(){
@@ -98,17 +99,33 @@
     });
   }
 
-  function add(){
+  function save(){
+    console.log(idedit);
     $('#phonebook-form').submit(function(e){
       e.preventDefault();
-      $.ajax({
-        method: "POST",
-        url: "http://localhost:3001/phonebooks",
-        data: $(this).serialize()
-      })
-      .done(function(data) {
-        drawTable();
-      });
+      if(idedit != ""){
+        $.ajax({
+          method: "PUT",
+          url: "http://localhost:3001/phonebooks/" + idedit,
+          data: $(this).serialize()
+        })
+        .done(function(data) {
+          idedit = "";
+          $('#phonebook-form input').val("")
+          drawTable();
+        });
+      }else{
+        $.ajax({
+          method: "POST",
+          url: "http://localhost:3001/phonebooks",
+          data: $(this).serialize()
+        })
+        .done(function(data) {
+          idedit = "";
+          $('#phonebook-form input').val("")
+          drawTable();
+        });
+      }
       return false;
     });
   }
@@ -130,10 +147,14 @@
     })
   }
 
-  function confirmDelete(){
-    $('#btn-testing').click(function(){
-
-    })
+  function edit(){
+    $( "#phonebook-table tbody" ).on( "click", ".btn-edit", function() {
+      $.get( "http://localhost:3001/phonebooks/" + $(this).attr("data-id"), function(data) {
+        $('#name').val(data.name);
+        $('#phone').val(data.phone);
+        idedit = data._id;
+      });
+    });
   }
   </script>
 </body>
