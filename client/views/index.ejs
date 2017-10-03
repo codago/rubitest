@@ -2,12 +2,10 @@
 <html>
 <head>
   <title>PHONEBOOKS APP</title>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="/stylesheets/bootstrap.min.css" >
   <link rel='stylesheet' href='/stylesheets/style.css' />
-  <script
-  src="https://code.jquery.com/jquery-2.2.4.min.js"
-  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-  crossorigin="anonymous"></script>
+  <script type="text/javascript" src="/javascripts/jquery-2.2.4.min.js"></script>
+  <script type="text/javascript" src="/javascripts/bootstrap.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -56,12 +54,30 @@
         </tbody>
       </table>
     </div>
-
+    <div id="confirm-delete" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Confirm Delete</h4>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+            <button id="btn-delete" type="button" class="btn btn-primary" data-id="">Yes</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
   </div>
   <script type="text/javascript">
   $(document).ready(function(){
     drawTable();
     add();
+    remove();
+    confirmDelete();
   })
 
   function drawTable(){
@@ -72,7 +88,10 @@
         html += "<td>" + data[i]._id + "</td>"
         html += "<td>" + data[i].name + "</td>"
         html += "<td>" + data[i].phone + "</td>"
-        html += "<td>&nbsp;</td>"
+        html += '<td>'
+        html += '<button class="btn btn-success btn-edit" type="button" data-id="' + data[i]._id + '">Edit</button>&nbsp;'
+        html += '<button class="btn btn-danger btn-delete" type="button" data-id="' + data[i]._id + '">Delete</button>'
+        html += '</td>'
         html += "</tr>"
       }
       $("#phonebook-table tbody").html(html);
@@ -92,6 +111,29 @@
       });
       return false;
     });
+  }
+
+  function remove(){
+    $( "#phonebook-table tbody" ).on( "click", ".btn-delete", function() {
+      $("#btn-delete").attr("data-id", $(this).attr("data-id"));
+      $('#confirm-delete').modal('show');
+    });
+
+    $("#btn-delete").click(function(){
+      $.ajax({
+        method: "DELETE",
+        url: "http://localhost:3001/phonebooks/" + $(this).attr("data-id")
+      }).done(function(data) {
+        $('#confirm-delete').modal('hide');
+        drawTable();
+      });
+    })
+  }
+
+  function confirmDelete(){
+    $('#btn-testing').click(function(){
+
+    })
   }
   </script>
 </body>
